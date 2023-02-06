@@ -70,6 +70,17 @@
 // 1. Sukurti pradinius duomenų masyvą, kuriame būtų bent 5 studentų duomenys (objektų formatu).
 // 2. Sukurti funkciją, kuri priima šiuos duomenis ir užkrovus puslapį į ekraną iškart išveda duomenis iš šio masyvo.
 
+// SEPTINTA UŽDUOTIS:
+// 1. Prie kiekvieno studento pridėti mygtuką, kurį paspaudus leistų redaguoti studento duomenis.
+// 2. Redaguojant studentą, submit mygtuko tekstas turėtų pasikeisti į „Save Changes".
+// 3. Pakeitus studento duomenis, turi iššokti <span> elementas, kuris informuoja apie studento duomenų redagavimą: „Studento (Vardas Pavardė) duomenys sėkmingai pakeisti". Šis span elementas dingsta po 5 sekundžių. 1. Sukurti Edit mygtuką.
+// 2. Prie mygtuko pridėti event listener'į.
+// 3. Surinkti studento duomenis ir jais užpildyti formos laukelius.
+// 4. Pakeisti formos submit mygtuko tekstą.
+// 5. Išsaugoti studento HTML elementą kintamąjame.
+// 6. Submit event'o metu patikrinti ar kuriame naują studentą, ar redaguojame jau sukurtą.
+// 7. Jeigu studentas redaguojamas, šį naują (redaguotą) HTML elementą panaudoti perrašant seną studento HTML elementą (kuris išsaugotas 5 žingsnyje). 8. Pakeisti formos submit mygtuko tekstą į pradinį ir pakeisti iššokančio pranešimo tekstą.
+
 const inialData = [
     {
         firstName: 'John',
@@ -79,56 +90,141 @@ const inialData = [
         email: 'john.doe@email.com',
         itKnowledge: 7,
         group: 'feu4',
-        favouriteITLanguage: ['Pyhton', 'JavaScript', 'PHP']
-    }
-]
+        favouriteITLanguage: ['Pyhton', 'JavaScript', 'PHP'],
+    },
+];
+
+function renderInitialData(students, form) {
+    students.forEach(student => {
+      renderSingleStudent(student, form);
+    });
+  }
 
 // Romano versija per savatigali
 function renderSingleStudent (student, form) {
     const studentName = student.firstName
-
+    const studentSurname = student.lastName
+    const studentAge = student.age
+    const studentPhone = student.phoneNumber
+    const studentEmail = student.email
+    const studentItKnowledge = student.itKnowledge
+    const studentGroup = student.group
+    const studentInterests = student.favouriteITLanguage
 
     const studentItem = document.createElement('div')
     studentItem.classList.add('student-item')
+    
+    const studentNameElement = document.createElement('p')
+    studentNameElement.innerHTML = `First name: ${studentName}`
 
-    const nameElement = document.createElement('p')
-    nameElement.innerHTML = `First name: ${studentName}`
-}
-renderInitialData(initialData, studentForm);
+    const studentSurnameElement = document.createElement('p')
+    studentSurnameElement.innerHTML = `Last name: ${studentSurname}`
 
+    const ageElement = document.createElement('p')
+    ageElement.innerHTML = `Age: ${studentAge}`
 
-function studentsData (inialData, place) {
-    let studentDataPlace = document.createElement('div')
-    place.append(studentDataPlace)
+    const phoneElement = document.createElement('p')
+    phoneElement.innerHTML = `Phone number: ${studentPhone}`
 
-    inialData.map(data => {
-        let placeHolderFirst = document.createElement('p')
-        placeHolderFirst.textContent = `First name: ${data.firstName}` 
+    const emailElement = document.createElement('p')
+    emailElement.innerHTML = `Email address: ${studentEmail}`
 
-        let placeHolderLast = document.createElement('p')
-        placeHolderLast.textContent = `Last name: ${data.lastName}` 
+    const ItKnowledgeElement = document.createElement('p')
+    ItKnowledgeElement.innerHTML = `Student knowledge rating: ${studentItKnowledge}`
 
-        let placeHolderAge = document.createElement('p')
-        placeHolderAge.textContent = `Age: ${data.age}` 
+    const radioElement = document.createElement('p')
+    radioElement.innerHTML = `Student group: ${studentGroup}`
 
-        let placeHolderPhone = document.createElement('p')
-        placeHolderPhone.textContent = `Phone number: ${data.phoneNumber}` 
+    const interestWrapper = document.createElement('div')
+    interestWrapper.innerHTML = `Student group: ${studentInterests}`
 
-        let placeHolderEmail = document.createElement('p')
-        placeHolderEmail.textContent = `Email address: ${data.email}` 
+    const interestTitle = document.createElement('p')
+    interestTitle.className = 'interest-title'
+    interestTitle.textContent = 'No interests :('
 
-        let placeHolderItKnowledge = document.createElement('p')
-        placeHolderItKnowledge.textContent = `Student knowledge: ${data.itKnowledge}` 
+    interestWrapper.append(interestTitle)
+    
+    if (studentInterests.length > 0) {
+        interestTitle.textContent = 'Student interests: '
+        const favouriteITUl = document.createElement('ul')
 
-        let placeHolderGroup = document.createElement('p')
-        placeHolderGroup.textContent = `Student group: ${data.group}` 
+        studentInterests.forEach(interest => {
+            const favouriteITLi = document.createElement('li')
+            favouriteITLi.textContent = interest.value
 
-        // let placeHolderfavItLanguage = document.createElement('p')
-        // placeHolderfavItLanguage.textContent = `Favourite IT language: ${data.favouriteITLanguage}` 
+            favouriteITUl.append(interest)
+        })
 
-        studentDataPlace.append(placeHolderFirst, placeHolderLast, placeHolderAge, placeHolderPhone, placeHolderEmail, placeHolderItKnowledge, placeHolderGroup)
+        interestWrapper.append(favouriteITUl)
+    }
+
+    const showCensored = document.createElement('button')
+    showCensored.textContent = 'Show censored'
+
+    let privateInfoHidden = true
+
+    showCensored.addEventListener('click', () => {
+        if (privateInfoHidden) {
+            showCensored.textContent = 'Hide information'
+            studentEmail.textContent = `Email address: ${email}`
+            studentPhone.textContent = `Phone: ${phone}`
+        } else {
+            showCensored.textContent = 'Show censored'
+            studentEmail.textContent = `Email address: ****`
+            studentPhone.textContent = `Phone: ****`
+        }
     })
+
+    privateInfoHidden = !privateInfoHidden
+
+    const deleteStudent = document.createElement('button')
+    deleteStudent.textContent = 'Delete student'
+
+    deleteStudent.addEventListener('click', () => {
+        studentItem.remove()
+
+        const deletedStudentMessage = `Student (${firstName} ${lastName}) successfully deleted`
+        alert(form, deletedStudentMessage)
+    })
+
+    studentItem.append(studentNameElement, studentSurnameElement, ageElement, phoneElement, emailElement, ItKnowledgeElement, radioElement, interestWrapper, showCensored, deleteStudent)
+    form.append(studentItem)
 }
+
+
+
+// function studentsData (inialData, place) {
+//     let studentDataPlace = document.createElement('div')
+//     place.append(studentDataPlace)
+
+//     inialData.map(data => {
+//         let placeHolderFirst = document.createElement('p')
+//         placeHolderFirst.textContent = `First name: ${data.firstName}` 
+
+//         let placeHolderLast = document.createElement('p')
+//         placeHolderLast.textContent = `Last name: ${data.lastName}` 
+
+//         let placeHolderAge = document.createElement('p')
+//         placeHolderAge.textContent = `Age: ${data.age}` 
+
+//         let placeHolderPhone = document.createElement('p')
+//         placeHolderPhone.textContent = `Phone number: ${data.phoneNumber}` 
+
+//         let placeHolderEmail = document.createElement('p')
+//         placeHolderEmail.textContent = `Email address: ${data.email}` 
+
+//         let placeHolderItKnowledge = document.createElement('p')
+//         placeHolderItKnowledge.textContent = `Student knowledge: ${data.itKnowledge}` 
+
+//         let placeHolderGroup = document.createElement('p')
+//         placeHolderGroup.textContent = `Student group: ${data.group}` 
+
+//         // let placeHolderfavItLanguage = document.createElement('p')
+//         // placeHolderfavItLanguage.textContent = `Favourite IT language: ${data.favouriteITLanguage}` 
+
+//         studentDataPlace.append(placeHolderFirst, placeHolderLast, placeHolderAge, placeHolderPhone, placeHolderEmail, placeHolderItKnowledge, placeHolderGroup)
+//     })
+// }
 
 
 const form = document.querySelector('form')
@@ -142,55 +238,57 @@ itKnowledgeInput.addEventListener('input', (event) => {
     itKnowledgeOutput.textContent = event.target.value
 })
 
-studentsData(inialData, studentsList)
+// studentsData(inialData, studentsList)
+renderInitialData(inialData, form);
+
 
 form.addEventListener('submit', (event) => {
     event.preventDefault()
 
-    let studentsList = document.querySelector('#students-list')
+    const studentsList = document.querySelector('#students-list')
 
     const nameInput = event.target.firstName
 
-    let firstName = nameInput.value
-    let lastName = document.querySelector('#lastName').value
-    let age = document.querySelector('#age').value
-    let phone = document.querySelector('#phone').value
-    let email = document.querySelector('#email').value
-    let studentKnowledge = event.target['it-knowledge'].value
+    const firstName = nameInput.value
+    const lastName = document.querySelector('#lastName').value
+    const age = document.querySelector('#age').value
+    const phone = document.querySelector('#phone').value
+    const email = document.querySelector('#email').value
+    const studentKnowledge = event.target['it-knowledge'].value
     
-    let studentGroup = document.querySelector('input[type="radio"]:checked').value
+    const studentGroup = document.querySelector('input[type="radio"]:checked').value
 
-    let favouriteIT = document.querySelectorAll('[name="interest"]:checked')
+    const favouriteIT = document.querySelectorAll('[name="interest"]:checked')
 
-    let studentItem = document.createElement('div')
+    const studentItem = document.createElement('div')
     studentItem.classList.add('student-item')
     
-    let studentNameElement = document.createElement('h4')
+    const studentNameElement = document.createElement('h4')
     studentNameElement.className = 'full-name'
 
-    let ageElement = document.createElement('h5')
+    const ageElement = document.createElement('h5')
     ageElement.className = 'age'
 
-    let phoneElement = document.createElement('h5')
+    const phoneElement = document.createElement('h5')
     phoneElement.className = 'phone'
 
-    let emailElement = document.createElement('h5')
+    const emailElement = document.createElement('h5')
     emailElement.className = 'email'
 
-    let skillsElement = document.createElement('h5')
+    const skillsElement = document.createElement('h5')
     skillsElement.className = 'skills'
 
-    let radioElement = document.createElement('h5')
+    const radioElement = document.createElement('h5')
     radioElement.className = 'radio'
 
-    let checkboxElement = document.createElement('div')
+    const checkboxElement = document.createElement('div')
     checkboxElement.className = 'checkbox'
 
-    let interestTitle = document.createElement('h5')
+    const interestTitle = document.createElement('h5')
     interestTitle.className = 'interest-title'
     interestTitle.textContent = 'No interests :('
 
-    // let hidePersonalInfo = document.createElement('button')
+    // const hidePersonalInfo = document.createElement('button')
     // hidePersonalInfo.textContent = 'Hide personal information'
 
     // function hidePersonalFunction () {
